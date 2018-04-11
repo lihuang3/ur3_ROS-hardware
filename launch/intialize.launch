@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<launch>
+  <include file="$(find ur_modern_driver)/launch/ur3_bringup.launch">
+    <arg name="robot_ip" default="192.168.1.102"/>
+  </include>
+  <!-- Launch moveit -->
+  <include file="$(find ur3_moveit_config)/launch/ur3_moveit_planning_execution.launch">
+    <arg name="limited" default="$(arg limited)"/>
+    <arg name="debug" default="$(arg debug)" />
+  </include>
+
+  <include file="$(find ur3_moveit_config)/launch/moveit_rviz.launch">
+    <arg name="config" default="true"/>
+  </include>
+
+  <node name="usb_cam" pkg="usb_cam" type="usb_cam_node" output="screen" >
+    <param name="video_device" value="/dev/video0" />
+    <param name="image_width" value="640" />
+    <param name="image_height" value="480" />
+    <param name="pixel_format" value="yuyv" />
+    <param name="camera_frame_id" value="usb_cam" />
+    <param name="io_method" value="mmap"/>
+  </node>
+  <node name="image_view" pkg="image_view" type="image_view" respawn="false" output="screen">
+    <remap from="image" to="/usb_cam/image_raw"/>
+    <param name="autosize" value="true" />
+  </node>
+</launch>
