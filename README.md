@@ -27,3 +27,14 @@ After you download rosserial, to generate custom messages you should follow the 
   rosrun rosserial_arduino make_libraries.py /home/<username>/arduino-1.8.5/libraries
 ```
 you can check you custom message folder at /home/<username>/arduino-1.8.5/libraries/ros_lib/ur5_notebook (or ur3_hardware)
+
+To use arduino subscribe ROS topic:
+1. compile /ur3_hardware/arduino_gripper/arduino_gripper.ino in Arduino IDE, and uplaod to board
+2. Open a new Terminal and run initialize.roslaunch
+3. Open another Terminal and start the subscriber node by typing the following command:
+```
+cd <your workspace>
+source devel/setup.bash
+rosrun rosserial_python serial_node.py /dev/ttyACM1
+```
+4. In Arduino IDE open serial monitor
