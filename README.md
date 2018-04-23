@@ -7,14 +7,23 @@ Download the repo [`ur_modern_driver`](https://github.com/ThomasTimm/ur_modern_d
 To connect your PC and an UR3, run the following launch file, (you need to `source devel/setup.bash` first, and go to each folder that includes the launch file to launch it)
 ```
   roslaunch ur_modern_driver ur3_bringup.launch robot_ip:=ROBOT_IP_ADDRESS
-  
+
   roslaunch ur3_moveit_config ur3_moveit_planning_execution.launch
-  
+
   roslaunch ur3_moveit_config moveit_rviz.launch config:=true
 ```
 
 #### 2. Image Processing
 
 #### 3. ROS-Arduino
-##### 3.1 
+##### 3.1
 [`official tutorial`](http://wiki.ros.org/rosserial_arduino/Tutorials)
+[`Generating Message Header File`](http://wiki.ros.org/rosserial_client/Tutorials/Generating%20Message%20Header%20Files)
+
+After you download rosserial, to generate custom messages you should follow the following step:
+```
+  cd <your workspace>
+  source devel/setup.bash
+  rosrun rosserial_arduino make_libraries.py /home/<username>/arduino-1.8.5/libraries
+```
+you can check you custom message folder at /home/<username>/arduino-1.8.5/libraries/ros_lib/ur5_notebook (or ur3_hardware)
