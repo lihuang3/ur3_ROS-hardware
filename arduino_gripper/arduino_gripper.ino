@@ -12,12 +12,12 @@ ros::NodeHandle  nh;
 void messageCb( const ur5_notebook::Tracker & msg){
   if (msg.flag2) 
   {
-    digitalWrite(13, HIGH);
+    digitalWrite(13, LOW);
     Serial.println("Gripper on!");
   }
   else 
   {
-    digitalWrite(13, LOW); // toggle ssr 
+    digitalWrite(13, HIGH); // toggle ssr 
     Serial.println("Gripper off!");
   }
 }
