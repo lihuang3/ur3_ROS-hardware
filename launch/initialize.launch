@@ -10,10 +10,11 @@
     <arg name="debug" default="False" />
   </include>
 
-  <include file="$(find ur3_moveit_config)/launch/moveit_rviz.launch">
+ <!-- 
+ <include file="$(find ur3_moveit_config)/launch/moveit_rviz.launch">
     <arg name="config" default="true"/>
   </include>
-
+-->
   <node name="usb_cam" pkg="usb_cam" type="usb_cam_node" output="screen" >
     <param name="video_device" value="/dev/video1" />
     <param name="image_width" value="640" />

@@ -112,8 +112,8 @@ class ur3_mp:
         self.arm.set_goal_position_tolerance(0.01)
         self.arm.set_goal_orientation_tolerance(0.1)
         self.arm.set_planning_time(0.1)
-        self.arm.set_max_acceleration_scaling_factor(.1)
-        self.arm.set_max_velocity_scaling_factor(.1)
+        self.arm.set_max_acceleration_scaling_factor(.3)
+        self.arm.set_max_velocity_scaling_factor(.35)
 
         # Get the current pose so we can add it as a waypoint
         start_pose = self.arm.get_current_pose(self.end_effector_link).pose
@@ -144,14 +144,19 @@ class ur3_mp:
 
         # Specify default (idle) joint states
         self.default_joint_states = self.arm.get_current_joint_values()
-        Q0 =[1.5713225603103638, -2.0962370077716272, -1.3499930540667933, -1.265561882649557, 1.57, 1.596241985951559]
+        Q0 = [1.5713225603103638, -2.0962370077716272, -1.3499930540667933, -1.265561882649557, 1.57, 1.596241985951559]
+        Q = [2.700089454650879, -1.6774938742267054, -1.9622791449176233, -1.0725882689105433, 1.5723614692687988, 1.693281888961792]
 
-        self.default_joint_states[0] = Q0[0]
-        self.default_joint_states[1] = Q0[1]
-        self.default_joint_states[2] = Q0[2]
-        self.default_joint_states[3] = Q0[3]
-        self.default_joint_states[4] = Q0[4]
-        self.default_joint_states[5] = Q0[5]
+        Q1 = [2.6995975971221924, -1.960052792225973, -2.1507018248187464, -0.601605240498678, 1.57, 1.694779311810629]
+
+        self.default_joint_states = Q0
+
+        # self.default_joint_states[0] = Q0[0]
+        # self.default_joint_states[1] = Q0[1]
+        # self.default_joint_states[2] = Q0[2]
+        # self.default_joint_states[3] = Q0[3]
+        # self.default_joint_states[4] = Q0[4]
+        # self.default_joint_states[5] = Q0[5]
 
         self.arm.set_joint_value_target(self.default_joint_states)
 
@@ -161,9 +166,14 @@ class ur3_mp:
         sleep(2)
         self.arm.execute(plan)
 
+        self.transition_states = deepcopy(self.default_joint_states)
+        self.transition_states = Q
+
+
+
         # Specify end states (drop object)
         self.end_joint_states = deepcopy(self.default_joint_states)
-        self.end_joint_states[0] = 3.20
+        self.end_joint_states = Q1
         # self.end_joint_states[1] = -1.3705
 
 
@@ -289,6 +299,7 @@ class ur3_mp:
             wpose.position.y += self.error_y*0.015/105
             print wpose.position.x
             print wpose.position.y
+            self.waypoints.append(deepcopy(wpose))
             # wpose.position.z = 0.15
                 #wpose.position.z = 0.4005
 
@@ -318,18 +329,101 @@ class ur3_mp:
             """
             plan, fraction = self.arm.compute_cartesian_path(self.waypoints, 0.01, 0.0, True)
             print fraction
-
+            print self.error_x*0.025/105, self.error_y*0.015/105
             # plan = self.arm.plan()
-
+            self.phase = 1
             # If we have a complete plan, execute the trajectory
-            if 1-fraction < 0.2:
+            if 1-fraction < 0.2 and not (abs(self.error_x*0.025/105)<0.005 and abs(self.error_y*0.015/105)<0.002):
                 rospy.loginfo("Path computed successfully. Moving the arm.")
                 num_pts = len(plan.joint_trajectory.points)
                 rospy.loginfo("\n# intermediate waypoints = "+str(num_pts))
                 self.arm.execute(plan)
                 rospy.loginfo("Path execution complete.")
+            elif (abs(self.error_x*0.025/105)<0.005 and abs(self.error_y*0.015/105)<0.002):
+                self.phase = 2
             else:
                 rospy.loginfo("Path planning failed")
+
+            if self.phase ==2:
+                self.track_flag=False
+                start_pose = self.arm.get_current_pose(self.end_effector_link).pose
+
+                wpose = deepcopy(start_pose)
+                wpose.position.z = 0.1
+                self.waypoints = []
+                self.waypoints.append(deepcopy(wpose))
+
+                self.arm.set_start_state_to_current_state()
+                plan, fraction = self.arm.compute_cartesian_path(self.waypoints, 0.01, 0.0, True)
+                self.arm.execute(plan)
+
+                tracker.flag2 = 1
+                self.cxy_pub.publish(tracker)
+
+                sleep(0.2)
+
+                start_pose = self.arm.get_current_pose(self.end_effector_link).pose
+
+                wpose = deepcopy(start_pose)
+                wpose.position.z = 0.06
+                self.waypoints = []
+                self.waypoints.append(deepcopy(wpose))
+
+                self.arm.set_start_state_to_current_state()
+                plan, fraction = self.arm.compute_cartesian_path(self.waypoints, 0.01, 0.0, True)
+                self.arm.execute(plan)
+
+                start_pose = self.arm.get_current_pose(self.end_effector_link).pose
+
+                sleep(0.2)
+
+                wpose = deepcopy(start_pose)
+                wpose.position.z = 0.036    # 0.035
+                self.waypoints = []
+                self.waypoints.append(deepcopy(wpose))
+
+                self.arm.set_start_state_to_current_state()
+                plan, fraction = self.arm.compute_cartesian_path(self.waypoints, 0.005, 0.0, True)
+                self.arm.execute(plan)
+
+                sleep(0.5)
+                start_pose = self.arm.get_current_pose(self.end_effector_link).pose
+
+                wpose = deepcopy(start_pose)
+                wpose.position.z = 0.2168
+                self.waypoints = []
+                self.waypoints.append(deepcopy(wpose))
+
+                self.arm.set_start_state_to_current_state()
+                plan, fraction = self.arm.compute_cartesian_path(self.waypoints, 0.005, 0.0, True)
+                self.arm.execute(plan)
+
+
+
+                self.arm.set_joint_value_target(self.transition_states)
+                self.arm.set_start_state_to_current_state()
+                plan = self.arm.plan()
+                self.arm.execute(plan)
+
+                sleep(0.5)
+
+                self.arm.set_joint_value_target(self.end_joint_states)
+                self.arm.set_start_state_to_current_state()
+                plan = self.arm.plan()
+                self.arm.execute(plan)
+
+
+                sleep(1)
+
+                tracker.flag2 = 0
+                self.cxy_pub.publish(tracker)
+                sleep(1)
+
+                self.arm.set_joint_value_target(self.transition_states)
+                self.arm.set_start_state_to_current_state()
+                plan = self.arm.plan()
+                self.arm.execute(plan)
+
 
         else:
             # Get the current pose so we can add it as a waypoint

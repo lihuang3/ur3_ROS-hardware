@@ -28,6 +28,7 @@ void setup()
 { 
   Serial.begin(57600);  
   pinMode(13, OUTPUT);
+  digitalWrite(13, HIGH);
   nh.initNode();
   nh.subscribe(sub);
 }
