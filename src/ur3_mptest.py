@@ -50,16 +50,7 @@ client = None
 
 class ur3_mp:
     def __init__(self):
-        self.waypoints= []
-        self.pointx = []
-        self.pointy = []
-        self.phase = 1
-        self.object_cnt = 0
-        self.track_flag = False
-        self.default_pose_flag = True
-        self.cx = 320.0
-        self.cy = 240.0
-        self.points=[]
+
         try:
             inp = raw_input("Continue? y/n: ")[0]
             if (inp == 'y'):
@@ -82,6 +73,16 @@ class ur3_mp:
             raise
 
     def default_pose_execute(self):
+        self.waypoints= []
+        self.pointx = []
+        self.pointy = []
+        self.phase = 1
+        self.object_cnt = 0
+        self.track_flag = False
+        self.default_pose_flag = True
+        self.cx = 320.0
+        self.cy = 240.0
+        self.points=[]
 
         self.state_change_time = rospy.Time.now()
 
@@ -190,7 +191,7 @@ class ur3_mp:
             self.track_flag = False
             self.phase = 1
 
-        if (self.track_flag and -0.1 < self.waypoints[0].position.x and self.waypoints[0].position.x < 0.3):
+        if (self.track_flag ):
             self.execute()
             self.default_pose_flag = False
         else:
@@ -203,8 +204,6 @@ class ur3_mp:
 
     def execute(self):
         if self.track_flag:
-
-
             # Get the current pose so we can add it as a waypoint
             start_pose = self.arm.get_current_pose(self.end_effector_link).pose
 
@@ -286,8 +285,10 @@ class ur3_mp:
             # # Set the next waypoint to the right 0.5 meters
             # else:
 
-            wpose.position.x -= self.error_x*0.05/105
-            wpose.position.y += self.error_y*0.04/105
+            wpose.position.x -= self.error_x*0.025/105
+            wpose.position.y += self.error_y*0.015/105
+            print wpose.position.x
+            print wpose.position.y
             # wpose.position.z = 0.15
                 #wpose.position.z = 0.4005
 
@@ -303,32 +304,32 @@ class ur3_mp:
             #
             #     self.arm.set_start_state_to_current_state()
             #
-            #     # Plan the Cartesian path connecting the waypoints
-            #
-            #     """moveit_commander.move_group.MoveGroupCommander.compute_cartesian_path(
-            #             self, waypoints, eef_step, jump_threshold, avoid_collisios= True)
-            #
-            #        Compute a sequence of waypoints that make the end-effector move in straight line segments that follow the
-            #        poses specified as waypoints. Configurations are computed for every eef_step meters;
-            #        The jump_threshold specifies the maximum distance in configuration space between consecutive points
-            #        in the resultingpath. The return value is a tuple: a fraction of how much of the path was followed,
-            #        the actual RobotTrajectory.
-            #
-            #     """
-            #     plan, fraction = self.arm.compute_cartesian_path(self.waypoints, 0.01, 0.0, True)
-            #
-            #
-            #     # plan = self.arm.plan()
-            #
-            #     # If we have a complete plan, execute the trajectory
-            #     if 1-fraction < 0.2:
-            #         rospy.loginfo("Path computed successfully. Moving the arm.")
-            #         num_pts = len(plan.joint_trajectory.points)
-            #         rospy.loginfo("\n# intermediate waypoints = "+str(num_pts))
-            #         self.arm.execute(plan)
-            #         rospy.loginfo("Path execution complete.")
-            #     else:
-            #         rospy.loginfo("Path planning failed")
+            # Plan the Cartesian path connecting the waypoints
+
+            """moveit_commander.move_group.MoveGroupCommander.compute_cartesian_path(
+                    self, waypoints, eef_step, jump_threshold, avoid_collisios= True)
+
+               Compute a sequence of waypoints that make the end-effector move in straight line segments that follow the
+               poses specified as waypoints. Configurations are computed for every eef_step meters;
+               The jump_threshold specifies the maximum distance in configuration space between consecutive points
+               in the resultingpath. The return value is a tuple: a fraction of how much of the path was followed,
+               the actual RobotTrajectory.
+
+            """
+            plan, fraction = self.arm.compute_cartesian_path(self.waypoints, 0.01, 0.0, True)
+            print fraction
+
+            # plan = self.arm.plan()
+
+            # If we have a complete plan, execute the trajectory
+            if 1-fraction < 0.2:
+                rospy.loginfo("Path computed successfully. Moving the arm.")
+                num_pts = len(plan.joint_trajectory.points)
+                rospy.loginfo("\n# intermediate waypoints = "+str(num_pts))
+                self.arm.execute(plan)
+                rospy.loginfo("Path execution complete.")
+            else:
+                rospy.loginfo("Path planning failed")
 
         else:
             # Get the current pose so we can add it as a waypoint
