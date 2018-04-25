@@ -2,10 +2,11 @@
 <launch>
   <include file="$(find ur_modern_driver)/launch/ur3_bringup.launch">
     <arg name="robot_ip" default="192.168.0.102"/>
+    <arg name="limited" default="True"/>
   </include>
   <!-- Launch moveit -->
   <include file="$(find ur3_moveit_config)/launch/ur3_moveit_planning_execution.launch">
-    <arg name="limited" default="False"/>
+    <arg name="limited" default="True"/>
     <arg name="debug" default="False" />
   </include>
 

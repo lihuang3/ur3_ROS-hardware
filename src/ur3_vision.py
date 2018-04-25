@@ -36,13 +36,13 @@ from std_msgs.msg import Header
 from trajectory_msgs.msg import JointTrajectory
 from trajectory_msgs.msg import JointTrajectoryPoint
 tracker = Tracker()
-class ur5_vision:
+class ur3_vision:
     def __init__(self):
         rospy.init_node("ur3_vision", anonymous=False)
         self.track_flag = False
         self.default_pose_flag = True
-        self.cx = 400.0
-        self.cy = 400.0
+        self.cx = 320.0
+        self.cy = 240.0
         self.bridge = cv_bridge.CvBridge()
         self.image_sub = rospy.Subscriber('/usb_cam/image_raw', Image, self.image_callback)
         self.cxy_pub = rospy.Publisher('cxy', Tracker, queue_size=1)
@@ -61,9 +61,9 @@ class ur5_vision:
         upper_red = np.array([10, 255, 255])
         mask = cv2.inRange(hsv, lower_red, upper_red)
         (_, cnts, _) = cv2.findContours(mask.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-        #area = cv2.contourArea(cnts)
+        # area = cv2.contourArea(cnts)
         h, w, d = image.shape
-        # print h, w, d  (800,800,3)
+        #print h, w, d
         #BEGIN FINDER
         M = cv2.moments(mask)
         if M['m00'] > 0:
@@ -110,5 +110,5 @@ class ur5_vision:
         cv2.imshow("window", image )
         cv2.waitKey(1)
 
-follower=ur5_vision()
+follower=ur3_vision()
 rospy.spin()
