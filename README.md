@@ -1,3 +1,6 @@
+[`Simulation video`](https://youtu.be/Yj5DEocFa48)
+[`Hardware video`](https://youtu.be/FAYPbAhYoXw)
+
 #### 1. Connecting Universal Robot (UR3) to PC (Ubuntu 16.04)
 ##### 1.1 Configure your hardware
 Follow the steps on the official website [`"Getting Started with a Universal Robot and ROS-Industrial"`](http://wiki.ros.org/universal_robot/Tutorials/Getting%20Started%20with%20a%20Universal%20Robot%20and%20ROS-Industrial) to set up network using a router.
