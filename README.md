@@ -1,3 +1,5 @@
+Universal Robot (UR3) Pick and Place Hardware Implementation with ROS using a USB Cam and an Electromagnetic Gripper
+
 [`Simulation video`](https://youtu.be/Yj5DEocFa48)
 [`Hardware video`](https://youtu.be/FAYPbAhYoXw)
 
