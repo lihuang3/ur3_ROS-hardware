@@ -3,6 +3,22 @@ Universal Robot (UR3) Pick and Place Hardware Implementation with ROS using a US
 [`Simulation video`](https://youtu.be/Yj5DEocFa48)
 [`Hardware video`](https://youtu.be/FAYPbAhYoXw)
 
+- How to cite this repository:
+  ```
+    Huang, L., Zhao, H., Universal Robot (UR3) Pick and Place Hardware Implementation with ROS using a USB Cam and an Electromagnetic Gripper, (2018), GitHub repository, https://github.com/lihuang3/ur3_ROS-hardware
+  ```
+  or BibTex
+  ```
+    @misc{Huang2018,
+      author = {Huang, L., Zhao, H.},
+      title = {Universal Robot (UR3) Pick and Place Hardware Implementation with ROS using a USB Cam and an Electromagnetic Gripper},
+      year = {2018},
+      publisher = {GitHub},
+      journal = {GitHub repository},
+      howpublished = {\url{https://github.com/lihuang3/ur3_ROS-hardware}}
+    }
+  ```
+
 #### 1. Connecting Universal Robot (UR3) to PC (Ubuntu 16.04)
 ##### 1.1 Configure your hardware
 Follow the steps on the official website [`"Getting Started with a Universal Robot and ROS-Industrial"`](http://wiki.ros.org/universal_robot/Tutorials/Getting%20Started%20with%20a%20Universal%20Robot%20and%20ROS-Industrial) to set up network using a router.
